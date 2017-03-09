@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Developing Data Products</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Developing Data Products">
+  <meta name="author" content="Utsav Bali">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Developing Data Products</h1>
+    <h2>Course Project - Receptor Pharmacology Dashboard</h2>
+    <p>Utsav Bali<br/>Coursera Data Science Specialization</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Objective</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This assignment aims to build a widget utilizing Shiny application containing a ui.R input file and a reactive output server.R file. This slide deck contains a Reproducible Presentation that includes four slides developed using Slidify and is hosted on GitHub containing embedded R code. </p>
+
+<ul>
+<li>Links to Project App &amp; Docs </li>
+<li><a href="https://github.com/ubali1">Shiny App</a></li>
+<li><a href="https://github.com/ubali1">server.R</a></li>
+<li><a href="https://github.com/ubali1">ui.R</a></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Function</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The widget plots a theoretical relationship between a compound&#39;s \(K_i\) and the ligand&#39;s \(EC_{50}\) in a typical competition experiment. This is modeled after the typical Cheng Prusoff correction as described in the following equation: </p>
+
+<p>\[K_i = \frac{IC_{50}}{(1+\frac{[Ligand]}{K_L})}\]</p>
+
+<p>Tab 2, likewise, illustrates the theoretical relationship between a ligand&#39;s \(EC_{50}\) in the presence of a competitive antagonist. Increasing concentrations of the antagonist [B] would lead to a right shift in the concentration response curve for the ligand as can be visualized using the widget. This relationship is modeled using the Gaddum equation listed below: </p>
+
+<p>\[\frac{[AR]}{R_{tot}} = \frac{[A]}{K_A(1+\frac{[B]}{K_D})+[A]}\]</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Explanation</h2>
+  </hgroup>
+  <article data-timings="">
+    <div style='text-align: center;'>
+    <img height='300' src='/Users/utsavbali/datasciencecoursera/Programming_Assignment/DDP_Slidify/DDP/assets/img/Plot1.png'/>
+</div>
+
+<p>We expect to see change in apparent \(K_i\) with changes in \(EC_{50}\)</p>
+
+<p>--When \(EC_{50}\) ~ 10 nM, [L] is ~10 x \(EC_{50}\) ~ 91% occupancy</p>
+
+<p>--When \(EC_{50}\) ~ 30 nM, [L] is ~3 x \(EC_{50}\) ~ 70% occupancy</p>
+
+<p>We would, therefore, expect to see ~ 3-fold change in \(K_i\) when testing [L] at 10 nM vs 30 nM. Furthermore, the change in \(K_i\) is more pronounced at low receptor occupancy when [L] &lt; \(EC_{50}\)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>An Example Code from the Widget</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">      library(ggplot2)
+</code></pre>
+
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 3.2.4
+</code></pre>
+
+<pre><code class="r">      EC50 &lt;- seq(from = 1, to = 500, by = 5)
+      x_axis &lt;- log10((100/EC50))
+      y_axis &lt;- ((100/(1+(100/EC50)))/20)
+      mu &lt;- log(100/20)
+
+      #plot(x_axis, y_axis, type=&#39;l&#39;,lwd=1, lxlab=&#39;Log{[ligand/EC50]}&#39;, ylab = &#39;Ki/IC50&#39;, col=&#39;blue&#39;,main=&#39;Relationship between compound Ki and Ligand EC50&#39;)
+      qplot(x_axis, y_axis, geom = &quot;smooth&quot;, xlab=&#39;Log{[ligand/EC50]}&#39;, ylab = &#39;Ki/IC50&#39;, color=&#39;red&#39;,main=&#39;Relationship between compound Ki and Ligand/EC50&#39;) + geom_vline(xintercept = mu, col = &quot;dodgerblue3&quot;, lty=&quot;dotdash&quot;) + geom_text(aes(x=mu+0.05, label=&quot;Log{[Ligand/EC50]}&quot;, y=0.65), colour=&quot;blue&quot;, angle=90)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-1-1.png" alt="plot of chunk unnamed-chunk-1"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Objective'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Function'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Explanation'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='An Example Code from the Widget'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='NA'>
+         5
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
