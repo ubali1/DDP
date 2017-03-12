@@ -15,9 +15,8 @@ knit        : slidify::knit2slides
 This assignment aims to build a widget utilizing Shiny application containing a ui.R input file and a reactive output server.R file. This slide deck contains a Reproducible Presentation that includes four slides developed using Slidify and is hosted on GitHub containing embedded R code. 
 
 - Links to Project App & Docs 
-- <a href="https://github.com/ubali1">Shiny App</a>
-- <a href="https://github.com/ubali1">server.R</a>
-- <a href="https://github.com/ubali1">ui.R</a>
+- <a href="https://ubali1.shinyapps.io/shiny/">Shiny App</a>
+- <a href="https://github.com/ubali1/DDP.git">server.R and ui.R</a>
 
 --- 
 
@@ -36,7 +35,7 @@ $$\frac{[AR]}{R_{tot}} = \frac{[A]}{K_A(1+\frac{[B]}{K_D})+[A]}$$
 
 
 <div style='text-align: center;'>
-    <img height='300' src='/Users/utsavbali/datasciencecoursera/Programming_Assignment/DDP_Slidify/DDP/assets/img/Plot1.png'/>
+    <img height='300' src='~/assets/img/Plot1.png'/>
 </div>
 
 We expect to see change in apparent $K_i$ with changes in $EC_{50}$
